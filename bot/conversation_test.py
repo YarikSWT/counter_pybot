@@ -1,4 +1,3 @@
-import telegram
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler)
 from datetime import datetime, date, time
 
