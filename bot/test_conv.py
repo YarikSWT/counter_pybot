@@ -30,7 +30,8 @@ def set(update, context):
     job = context.job_queue.run_daily(dialy_update_balance, dt.time(), context=chat_id)
 
     #add this for
-    name = 'job'+ chat_id
+    name = 'job'+ str(chat_id)
+
     context.chat_data[name] = job
 
     update.message.reply_text('Теперь, если будешь тратить или внезапно получишь деньги отправляй: /spend или /earn')
@@ -78,7 +79,8 @@ def stop(update, context):
         return ConversationHandler.END
 
     chat_id = update.message.chat_id
-    name = 'job'+chat_id
+    name = 'job' + str(chat_id)
+    print(name)
 
     job = context.chat_data[name]
     job.schedule_removal()
@@ -108,7 +110,7 @@ def main():
 
         states={
             SETTING: [MessageHandler(Filters.text, set)],
-            LIVE: [ CommandHandler("spend", spend),
+            LIVE: [CommandHandler("spend", spend),
                    CommandHandler("earn", earn) ],
             SPEND: [MessageHandler(Filters.text, do_spend)],
             EARN: [MessageHandler(Filters.text, do_earn)],
