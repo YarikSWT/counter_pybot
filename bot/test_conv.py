@@ -8,7 +8,6 @@ SETTING, SET_TIMER, LIVE, SPEND, EARN = range(5)
 def start(update, context):
     # update.message.reply_text('Send me the sum on month: /set <sum>')
     update.message.reply_text('Привет! Давай начнём работу.\nОтправь мне сколько ты готов тратить в этот месяц ')
-
     return SETTING
 
 def set(update, context):
