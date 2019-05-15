@@ -26,10 +26,12 @@ def set(update, context):
 
     #should replace with run_dialy
     #this is only for test
+
     job = context.job_queue.run_daily(dialy_update_balance, dt.time(), context=chat_id)
 
     #add this for
-    context.chat_data['job'] = job
+    name = 'job'+ chat_id
+    context.chat_data[name] = job
 
     update.message.reply_text('Теперь, если будешь тратить или внезапно получишь деньги отправляй: /spend или /earn')
 
@@ -75,9 +77,13 @@ def stop(update, context):
         update.message.reply_text('У вас нет активных аккаунтов. Отправь мне /start чтобы начать заново.')
         return ConversationHandler.END
 
-    job = context.chat_data['job']
+    chat_id = update.message.chat_id
+    name = 'job'+chat_id
+
+    job = context.chat_data[name]
     job.schedule_removal()
-    del context.chat_data['job']
+    del context.chat_data[name]
+
     del data[update.message.chat_id]
 
     update.message.reply_text('Ваш аккаунт диактивирован. Отправь мне /start чтобы начать заново.')
