@@ -1,1 +1,1 @@
-worker: python3 bot/test.py $PORT
+worker: python bot/test_conv.py $PORT
