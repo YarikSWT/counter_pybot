@@ -73,7 +73,7 @@ def stop(update, context):
 
     if 'job' not in context.chat_data:
         update.message.reply_text('У вас нет активных аккаунтов. Отправь мне /start чтобы начать заново.')
-        return
+        return ConversationHandler.END
 
     job = context.chat_data['job']
     job.schedule_removal()
