@@ -11,8 +11,10 @@ def start(update, context):
     return SETTING
 
 def set(update, context):
+
     chat_id = update.message.chat_id
     month_sum = int(update.message.text)
+
     day_sum = month_sum / 30
     data[chat_id] = {"sum": month_sum, "day_sum": month_sum / 30, "balance": month_sum / 30}
     update.message.reply_text('В месяц вы готовы тратить {}p. \nПолучается в день можете портатить {}p.'.format(month_sum, month_sum / 30))
@@ -24,12 +26,9 @@ def set(update, context):
     dt = datetime.combine(d, t)
     #print(dt.time())
 
-    #should replace with run_dialy
-    #this is only for test
-
     job = context.job_queue.run_daily(dialy_update_balance, dt.time(), context=chat_id)
 
-    #add this for
+    #add job to the context
     name = 'job'+ str(chat_id)
 
     context.chat_data[name] = job
@@ -74,13 +73,13 @@ def dialy_update_balance(context):
 
 def stop(update, context):
 
-    if 'job' not in context.chat_data:
+    chat_id = update.message.chat_id
+    name = 'job' + str(chat_id)
+
+    if name not in context.chat_data:
         update.message.reply_text('У вас нет активных аккаунтов. Отправь мне /start чтобы начать заново.')
         return ConversationHandler.END
 
-    chat_id = update.message.chat_id
-    name = 'job' + str(chat_id)
-    print(name)
 
     job = context.chat_data[name]
     job.schedule_removal()
@@ -109,11 +108,11 @@ def main():
         entry_points=[CommandHandler('start', start)],
 
         states={
-            SETTING: [MessageHandler(Filters.text, set)],
+            SETTING: [MessageHandler((Filters.text | Filters.group), set)],
             LIVE: [CommandHandler("spend", spend),
                    CommandHandler("earn", earn) ],
-            SPEND: [MessageHandler(Filters.text, do_spend)],
-            EARN: [MessageHandler(Filters.text, do_earn)],
+            SPEND: [MessageHandler((Filters.text | Filters.group), do_spend)],
+            EARN: [MessageHandler((Filters.text | Filters.group), do_earn)],
         },
 
         fallbacks=[CommandHandler('stop', stop)]

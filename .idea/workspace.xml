@@ -18,7 +18,7 @@
     <SUITE FILE_PATH="coverage/counter$main.coverage" NAME="main Coverage Results" MODIFIED="1557743843846" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bot" />
     <SUITE FILE_PATH="coverage/counter_pybot$main.coverage" NAME="main Coverage Results" MODIFIED="1557863696666" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bot" />
     <SUITE FILE_PATH="coverage/counter_pybot$conversation_test.coverage" NAME="conversation_test Coverage Results" MODIFIED="1557860873962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bot" />
-    <SUITE FILE_PATH="coverage/counter_pybot$test_conv.coverage" NAME="test_conv Coverage Results" MODIFIED="1557908436964" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bot" />
+    <SUITE FILE_PATH="coverage/counter_pybot$test_conv.coverage" NAME="test_conv Coverage Results" MODIFIED="1557931474465" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bot" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -58,8 +58,8 @@
       <file leaf-file-name="test_conv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bot/test_conv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="74" column="26" lean-forward="true" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="26" />
+            <state relative-caret-position="850">
+              <caret line="106" column="39" lean-forward="true" selection-start-line="106" selection-start-column="39" selection-end-line="106" selection-end-column="39" />
               <folding>
                 <element signature="e#0#110#0" expanded="true" />
               </folding>
@@ -400,7 +400,14 @@
       <option name="project" value="LOCAL" />
       <updated>1557906309331</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="repair add and delete jobQueue for different users v2">
+      <created>1557908474883</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1557908474883</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -450,7 +457,8 @@
     <MESSAGE value="add exit from conversaton, delete info from data at /stop" />
     <MESSAGE value="add exit from conversato at /stop 2" />
     <MESSAGE value="repair add and delete jobQueue for different users" />
-    <option name="LAST_COMMIT_MESSAGE" value="repair add and delete jobQueue for different users" />
+    <MESSAGE value="repair add and delete jobQueue for different users v2" />
+    <option name="LAST_COMMIT_MESSAGE" value="repair add and delete jobQueue for different users v2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -632,8 +640,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot/test_conv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="74" column="26" lean-forward="true" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="26" />
+        <state relative-caret-position="850">
+          <caret line="106" column="39" lean-forward="true" selection-start-line="106" selection-start-column="39" selection-end-line="106" selection-end-column="39" />
           <folding>
             <element signature="e#0#110#0" expanded="true" />
           </folding>
