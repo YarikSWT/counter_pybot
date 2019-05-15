@@ -17,7 +17,9 @@ def set(update, context):
     update.message.reply_text('В месяц вы готовы тратить {}p. \nПолучается в день можете портатить {}p.'.format(month_sum, month_sum / 30))
 
     d = date(2019, 3, 14)
-    t = time(9)
+
+    #-3 for heroku app
+    t = time(6, 00)
     dt = datetime.combine(d, t)
     print(dt.time())
 
