@@ -13,6 +13,7 @@ def start(update, context):
 def set(update, context):
     chat_id = update.message.chat_id
     month_sum = int(update.message.text)
+    day_sum = month_sum / 30
     data[chat_id] = {"sum": month_sum, "day_sum": month_sum / 30, "balance": month_sum / 30}
     update.message.reply_text('В месяц вы готовы тратить {}p. \nПолучается в день можете портатить {}p.'.format(month_sum, month_sum / 30))
 
@@ -21,7 +22,7 @@ def set(update, context):
     #-3 for heroku app
     t = time(6, 00)
     dt = datetime.combine(d, t)
-    print(dt.time())
+    #print(dt.time())
 
     #should replace with run_dialy
     #this is only for test
@@ -77,8 +78,12 @@ def stop(update, context):
     job = context.chat_data['job']
     job.schedule_removal()
     del context.chat_data['job']
+    del data[update.message.chat_id]
 
     update.message.reply_text('Ваш аккаунт диактивирован. Отправь мне /start чтобы начать заново.')
+
+    return ConversationHandler.END
+
 
 def do_echo(update):
     update.message.reply_text(update.message.text)
@@ -97,9 +102,8 @@ def main():
 
         states={
             SETTING: [MessageHandler(Filters.text, set)],
-            LIVE: [CommandHandler("spend", spend),
-                   CommandHandler("earn", earn)
-                    ],
+            LIVE: [ CommandHandler("spend", spend),
+                   CommandHandler("earn", earn) ],
             SPEND: [MessageHandler(Filters.text, do_spend)],
             EARN: [MessageHandler(Filters.text, do_earn)],
         },
