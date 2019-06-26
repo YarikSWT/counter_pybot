@@ -1,1 +1,1 @@
-worker: python bot/test_conv.py $PORT
+worker: docker-compose up

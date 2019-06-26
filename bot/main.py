@@ -1,5 +1,7 @@
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler)
 from datetime import datetime, date, time
+import os
+
 
 data = {}
 
@@ -86,7 +88,8 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    updater = Updater(token="773654970:AAEK1AsyL9yuDT-Mt6tuyGPXaMBLyNBd7FA", use_context=True, base_url="https://telegg.ru/orig/bot")
+    TOKEN = os.getenv("TOKEN", "796647708:AAH4AM9ZOaBaUQCUAwRe3YhN1pA4nC8rzLM")
+    updater = Updater(token=TOKEN, use_context=True, base_url="https://telegg.ru/orig/bot")
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
