@@ -1,0 +1,22 @@
+version: '2'
+services:
+  pybot:
+    build: .
+    ports:
+     - "6600:6600"
+    volumes:
+     - .:/code
+    env_file:
+     - .env
+     - ./data/data.env
+    depends_on:
+     - database
+  database:
+    image: mysql
+    ports:
+        - "33062:3306"
+    command: --init-file /data/application/init.sql
+    volumes:
+        - ./data/init.sql:/data/application/init.sql
+    env_file:
+      - ./data/data.env        
