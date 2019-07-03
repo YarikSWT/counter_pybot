@@ -3,6 +3,8 @@ from datetime import datetime, date, time
 import os
 import db
 from db import Chat
+import calendar
+
 
 data = {}
 updater = None
@@ -38,7 +40,7 @@ def set(update, context):
     dt = datetime.combine(d, t)
 
     job = context.job_queue.run_daily(dialy_update_balance, dt.time(), context=chat_id)
-    job_m = context.job_queue.run_once(month_end, dt.time(), context=chat_id)
+    job_m = context.job_queue.run_once(month_end, db.data_begin +  + datetime.timedelta(days=30) , context=chat_id)
 
     chat.daily_income_time = t ##добавляем в бд время
     db.session.commit()
@@ -138,6 +140,13 @@ def job_queue_after_reboot(updater):
         if (chat.daily_income_time != None):
             j.run_daily(dialy_update_balance, chat.daily_income_time, context=chat.chat_id)
         ## И еще добавить херню по оканчанию месяца
+
+def add_months(sourcedate, months):
+    month = sourcedate.month - 1 + months
+    year = sourcedate.year + month // 12
+    month = month % 12 + 1
+    day = min(sourcedate.day, calendar.monthrange(year,month)[1])
+    return datetime.date(year, month, day)
 
 def main():
     # Create the Updater and pass it your bot's token.
