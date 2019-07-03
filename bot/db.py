@@ -21,7 +21,15 @@ class Chat(Base):
        self.daily_income_time = daily_income_time
 
     def __repr__(self):
-        return "<Chat('%s','%d')>" % (self.chat_id, self.month_budget)
+        return "<"+str(self.chat_id)+", "+str(self.month_budget)+">"
+
+def get_chat(chat_id):
+    chat = session.query(Chat).get(chat_id)
+    if chat == None:
+        chat = Chat(chat_id, None, None, None, None)
+        session.add(chat)
+    return chat
+
 
 Session = sessionmaker(bind=engine)
 session = Session()
