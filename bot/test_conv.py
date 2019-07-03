@@ -27,6 +27,7 @@ def set(update, context):
     #print(dt.time())
 
     job = context.job_queue.run_daily(dialy_update_balance, dt.time(), context=chat_id)
+    job_m = context.job_queue.run_once(month_end, dt.time(), context=chat_id)
 
     #add job to the context
     name = 'job'+ str(chat_id)
@@ -70,6 +71,12 @@ def dialy_update_balance(context):
     chat_id = job.context
     data[chat_id]["balance"] += data[chat_id]["day_sum"]
     context.bot.send_message(chat_id, text='Доброе утро!\n+{}\nСегодня вы можете потратить {}p.\n'.format(data[chat_id]["day_sum"], data[chat_id]["balance"]))
+
+def month_end(update, context):
+    job = context.job
+    chat_id = job.context
+    chat = db.get_chat(chat_id)
+    context.bot.send_message(chat_id, text='Поздравляю, прошёл месяц.\nВаш баланс: {} \n\n Чтобы начать снова нажмите \stop и потом \start'.format(chat.balance))
 
 def stop(update, context):
 
