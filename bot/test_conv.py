@@ -1,5 +1,5 @@
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler)
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 import os
 import db
 from db import Chat
@@ -9,7 +9,7 @@ import calendar
 data = {}
 updater = None
 
-SETTING, SET_TIMER, LIVE, SPEND, EARN = range(5)
+SETTING, SET_TIMER, LIVE, SPEND, EARN= range(5)
 
 def start(update, context):
     # update.message.reply_text('Send me the sum on month: /set <sum>')
@@ -33,27 +33,44 @@ def set(update, context):
     db.session.commit()
 
     #ЧАСТЬ С ЗАДАНИЕМ ВРЕМЕНИ ОПОВЕЩЕНИЯ
-    d = date(2019, 3, 14)
+    d = datetime.now().date()
+    d2 = date(2019, 4, 14)
 
     #-3 for heroku app
     t = time(6, 00)
     dt = datetime.combine(d, t)
 
-    job = context.job_queue.run_daily(dialy_update_balance, dt.time(), context=chat_id)
-    job_m = context.job_queue.run_once(month_end, db.data_begin +  + datetime.timedelta(days=30) , context=chat_id)
+    update.message.reply_text('Введи свои время в формате HH:MM, когда тебе удобно чтобы приходили уведомления. хуй')
 
-    chat.daily_income_time = t ##добавляем в бд время
+    return SET_TIMER
+
+def set_timer(update, context):
+    time_str = update.message.text
+
+    print("USER text is = ",time_str )
+    dates = time_str.split(':')
+    time_update = time(int(dates[0]), int(dates[1]))
+    date_end = datetime.now() + timedelta(days=30)
+
+    chat_id = update.message.chat_id
+    chat = db.get_chat(chat_id)
+
+    job = context.job_queue.run_daily(dialy_update_balance, time_update, context=chat_id)
+    job_m = context.job_queue.run_once(month_end, date_end , context=chat_id)
+
+
+    chat.daily_income_time = time_update  ##добавляем в бд время
+    chat.month_update = date_end.date()
     db.session.commit()
 
-    #add job to the context
-    name = 'job'+ str(chat_id)
+    # add job to the context
+    name = 'job' + str(chat_id)
 
     context.chat_data[name] = job
-    #КОНЕЦ ЧАСТИ
 
     update.message.reply_text('Теперь, если будешь тратить или внезапно получишь деньги отправляй: /spend или /earn')
-
     return LIVE
+
 
 def spend(update, context):
     update.message.reply_text('Напишите мне сколько вы потратили')
@@ -63,12 +80,14 @@ def do_spend(update, context):
     amount = int(update.message.text)
     chat_id = update.message.chat_id
     chat = db.get_chat(chat_id)
-    data[chat_id]["balance"] -= amount
+
+    #data[chat_id]["balance"] -= amount
+
     chat.balance -=amount
     db.session.commit()
 
     text = 'Вы потратили '
-    update.message.reply_text(text + '{} p.\nСегодня вы можете потратить ещё {}.p'.format(amount, data[chat_id]["balance"]))
+    update.message.reply_text(text + '{} p.\nСегодня вы можете потратить ещё {}.p'.format(amount, chat.balance))
 
     return LIVE
 
@@ -80,20 +99,22 @@ def do_earn(update, context):
     amount = int(update.message.text)
     chat_id = update.message.chat_id
     chat = db.get_chat(chat_id)
-    data[chat_id]["balance"] += amount
+
+    #data[chat_id]["balance"] += amount
     chat.balance += amount
     db.session.commit()
 
     text = 'Вы заработали '
-    update.message.reply_text(text + '{} p.\nСегодня вы можете потратить ещё {}.p'.format(amount, data[chat_id]["balance"]))
+    update.message.reply_text(text + '{} p.\nСегодня вы можете потратить ещё {}.p'.format(amount, chat.balance))
     return LIVE
 
 def status(update, context):
-    update.message.reply_text(data[update.message.chat_id])
+    update.message.reply_text(db.get_chat(update.message.chat_id))
 
 def dialy_update_balance(context):
     job = context.job
     chat_id = job.context
+
     chat = db.get_chat(chat_id)
     day_sum = round(chat.month_budget / 30)
     chat.balance += day_sum
@@ -153,25 +174,40 @@ def main():
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
     TOKEN = os.getenv("TOKEN", "796647708:AAH4AM9ZOaBaUQCUAwRe3YhN1pA4nC8rzLM")
+    PROXY_SERVER = os.getenv("PROXY_SERVER")
+    PROXY_PORT=os.getenv("PROXY_PORT")
+    PROXY_USER = os.getenv("PROXY_USER")
+    PROXY_PASS = os.getenv("PROXY_PASS")
+    REQUEST_KWARGS = {
+        'proxy_url': 'socks5://'+PROXY_SERVER+':'+PROXY_PORT,
+        # Optional, if you need authentication:
+        'urllib3_proxy_kwargs': {
+            'username': PROXY_USER,
+            'password': PROXY_PASS,
+        }
+    }
     global updater
-    updater = Updater(token=TOKEN, use_context=True, base_url="https://telegg.ru/orig/bot")
+    updater = Updater(token=TOKEN, use_context=True, base_url="https://telegg.ru/orig/bot" ) #request_kwargs=REQUEST_KWARGS
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('start', start), CommandHandler('spend', spend), CommandHandler('earn', earn)],
 
         states={
             SETTING: [MessageHandler((Filters.text | Filters.group), set)],
+            SET_TIMER: [MessageHandler((Filters.text | Filters.group), set_timer)],
             LIVE: [CommandHandler("spend", spend),
-                   CommandHandler("earn", earn) ],
+                   CommandHandler("earn", earn)],
             SPEND: [MessageHandler((Filters.text | Filters.group), do_spend)],
             EARN: [MessageHandler((Filters.text | Filters.group), do_earn)],
         },
 
         fallbacks=[CommandHandler('stop', stop)]
     )
+
+    job_queue_after_reboot(updater)
 
     dp.add_handler(conv_handler)
 
@@ -180,7 +216,6 @@ def main():
     message_handler = MessageHandler(Filters.text, do_echo)
     dp.add_handler(message_handler)
 
-    job_queue_after_reboot(updater)
 
     # Start the Bot
     updater.start_polling()

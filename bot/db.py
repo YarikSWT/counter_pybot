@@ -1,8 +1,12 @@
 from sqlalchemy import Column, Integer, String, Date, Time, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-engine = create_engine('mysql+pymysql://root:secret@172.21.0.2/dev', echo=True)
+
+DATEBASE_URL= os.getenv("CLEARDB_DATABASE_URL", "mysql://root:secret@database/dev").replace("mysql", "mysql+pymysql")
+print(DATEBASE_URL)
+engine = create_engine(DATEBASE_URL, echo=True)
 Base = declarative_base()
 
 class Chat(Base):
@@ -12,13 +16,15 @@ class Chat(Base):
     month_budget = Column(Integer)
     balance = Column(Integer)
     daily_income_time = Column(Time)
+    month_update = Column(Date)
     
-    def __init__(self, chat_id, data_begin, month_budget, balance, daily_income_time):
+    def __init__(self, chat_id, data_begin, month_budget, balance, daily_income_time, month_update):
        self.chat_id = chat_id
        self.data_begin = data_begin
        self.month_budget = month_budget
        self.balance = balance
        self.daily_income_time = daily_income_time
+       self.month_update = month_update
 
     def __repr__(self):
         return "<"+str(self.chat_id)+", "+str(self.month_budget)+">"
