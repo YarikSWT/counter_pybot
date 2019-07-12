@@ -23,7 +23,7 @@ def set(update, context):
 
     day_sum = month_sum / 30
     data[chat_id] = {"sum": month_sum, "day_sum": month_sum / 30, "balance": month_sum / 30}
-    update.message.reply_text('В месяц вы готовы тратить {}p. \nПолучается в день можете портатить {}p.'.format(month_sum, month_sum / 30))
+    update.message.reply_text('В месяц вы готовы тратить {}p. \nПолучается в день можете портатить {}p.'.format(month_sum, round(month_sum / 30)))
 
     #Записываем в бд
     chat = db.get_chat(chat_id)
@@ -40,7 +40,8 @@ def set(update, context):
     t = time(6, 00)
     dt = datetime.combine(d, t)
 
-    update.message.reply_text('Введи свои время в формате HH:MM, когда тебе удобно чтобы приходили уведомления. хуй')
+    update.message.reply_text('Введите своё время в формате HH:MM, когда вам удобно, чтобы приходили ежедневные сообщение о пополнении баланса.')
+
 
     return SET_TIMER
 
@@ -58,15 +59,25 @@ def set_timer(update, context):
     job = context.job_queue.run_daily(dialy_update_balance, time_update, context=chat_id)
     job_m = context.job_queue.run_once(month_end, date_end , context=chat_id)
 
-
     chat.daily_income_time = time_update  ##добавляем в бд время
-    chat.month_update = date_end.date()
+    chat.month_update = date_end
     db.session.commit()
 
     # add job to the context
     name = 'job' + str(chat_id)
+    name_m = 'job_m'+str(chat_id)
 
     context.chat_data[name] = job
+    context.chat_data[name_m] = job_m
+
+    #Reply Keyboard
+    # custom_keyboard = [['top-left', 'top-right'],
+    #                    ['bottom-left', 'bottom-right']]
+    #
+    # reply_markup = update.telegram.ReplyKeyboardMarkup(custom_keyboard)
+    # context.bot.send_message(chat_id=chat_id,
+    #                  text="Теперь, если будешь тратить или внезапно получишь деньги отправляй: /spend или /earn",
+    #                  reply_markup=reply_markup)
 
     update.message.reply_text('Теперь, если будешь тратить или внезапно получишь деньги отправляй: /spend или /earn')
     return LIVE
@@ -122,29 +133,34 @@ def dialy_update_balance(context):
     # data[chat_id]["balance"] += data[chat_id]["day_sum"]
     updater.bot.send_message(chat_id, text='Доброе утро!\n+{}\nСегодня вы можете потратить {}p.\n'.format(day_sum, chat.balance))
 
-def month_end(update, context):
+def month_end(context):
     job = context.job
     chat_id = job.context
     chat = db.get_chat(chat_id)
-    context.bot.send_message(chat_id, text='Поздравляю, прошёл месяц.\nВаш баланс: {} \n\n Чтобы начать снова нажмите \stop и потом \start'.format(chat.balance))
+    updater.bot.send_message(chat_id, text='Поздравляю, прошёл месяц.\nВаш баланс: {} \n\n Чтобы начать снова нажмите \stop и потом \start'.format(chat.balance))
 
 def stop(update, context):
 
     chat_id = update.message.chat_id
     chat = db.get_chat(chat_id)
     name = 'job' + str(chat_id)
+    name_m = 'job_m'+ str(chat_id)
 
     #Изменить на БДшные
-    if name not in context.chat_data or chat == None or chat.daily_income_time == None :
+    if name not in context.chat_data or chat is None or chat.daily_income_time is None:
         update.message.reply_text('У вас нет активных аккаунтов. Отправь мне /start чтобы начать заново.')
         return ConversationHandler.END
 
     job = context.chat_data[name]
+    job_m = context.chat_data[name_m]
     job.schedule_removal()
+    job_m.schedule_removal()
     del context.chat_data[name]
+    del context.chat_data[name_m]
 
     del data[update.message.chat_id]
     chat.daily_income_time = None
+    chat.month_update = None
     db.session.commit()
 
     update.message.reply_text('Ваш аккаунт диактивирован. Отправь мне /start чтобы начать заново.')
@@ -158,8 +174,10 @@ def job_queue_after_reboot(updater):
     j = updater.job_queue
     chats = db.session.query(Chat).all()
     for chat in chats:
-        if (chat.daily_income_time != None):
+        if (chat.daily_income_time is not None):
             j.run_daily(dialy_update_balance, chat.daily_income_time, context=chat.chat_id)
+        if (chat.month_update is not None):
+            j.run_once(month_end, chat.month_update, context=chat.chat_id)
         ## И еще добавить херню по оканчанию месяца
 
 def add_months(sourcedate, months):

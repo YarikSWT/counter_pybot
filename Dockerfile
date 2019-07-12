@@ -7,4 +7,4 @@ ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN adduser myuser
 USER myuser
-CMD python bot/test_db.py
+CMD python bot/test_conv.py
