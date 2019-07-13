@@ -1,4 +1,4 @@
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler)
+from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler, PicklePersistence)
 from datetime import datetime, date, time
 import os
 
@@ -56,7 +56,7 @@ def do_earn(update, context):
     amount = int(update.message.text)
     chat_id = update.message.chat_id
     data[chat_id]["balance"] += amount
-    text = 'Вы заработали '
+    text = 'Вы заработали'
     update.message.reply_text(text + '{} p.\nСегодня вы можете потратить ещё {}.p'.format(amount, data[chat_id]["balance"]))
     return LIVE
 
@@ -88,11 +88,15 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
+    my_persistence = PicklePersistence(filename='persistent_data')
+
     TOKEN = os.getenv("TOKEN", "796647708:AAH4AM9ZOaBaUQCUAwRe3YhN1pA4nC8rzLM")
-    updater = Updater(token=TOKEN, use_context=True, base_url="https://telegg.ru/orig/bot")
+    updater = Updater(token=TOKEN, use_context=True, persistence=my_persistence, base_url="https://telegg.ru/orig/bot")
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
+
+    dp.chat_data = data
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
@@ -106,7 +110,10 @@ def main():
             EARN: [MessageHandler(Filters.text, do_earn)],
         },
 
-        fallbacks=[CommandHandler('stop', stop)]
+        fallbacks=[CommandHandler('stop', stop)],
+
+        persistent=True,
+        name='persistent_conversation'
     )
 
     dp.add_handler(conv_handler)
@@ -125,6 +132,7 @@ def main():
 
     # Start the Bot
     updater.start_polling()
+    print('BOT STARTED')
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since

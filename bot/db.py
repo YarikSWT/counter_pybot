@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Time, DateTime, create_engine
+from sqlalchemy import Column, Integer, String, Date, Time, DateTime, BigInteger, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
@@ -6,12 +6,12 @@ import os
 
 DATEBASE_URL= os.getenv("CLEARDB_DATABASE_URL", "mysql://root:secret@database/dev").replace("mysql", "mysql+pymysql").split('?')[0]
 print(DATEBASE_URL)
-engine = create_engine(DATEBASE_URL, echo=True)
+engine = create_engine(DATEBASE_URL, echo=True,  pool_recycle=300)
 Base = declarative_base()
 
 class Chat(Base):
     __tablename__ = 'chats'
-    chat_id = Column(Integer, primary_key=True)
+    chat_id = Column(BigInteger, primary_key=True)
     data_begin = Column(Date)
     month_budget = Column(Integer)
     balance = Column(Integer)
