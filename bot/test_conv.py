@@ -1,4 +1,4 @@
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler, PicklePersistence)
+from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler)
 from datetime import datetime, date, time, timedelta
 import os
 import db
@@ -20,11 +20,10 @@ def start(update, context):
 def set(update, context):
     chat_id = update.message.chat_id
     month_sum = int(update.message.text)
-    context.chat_data['budget'] = month_sum
+
     day_sum = month_sum / 30
     data[chat_id] = {"sum": month_sum, "day_sum": month_sum / 30, "balance": month_sum / 30}
     update.message.reply_text('В месяц вы готовы тратить {}p. \nПолучается в день можете портатить {}p.'.format(month_sum, round(month_sum / 30)))
-
 
     #Записываем в бд
     chat = db.get_chat(chat_id)
@@ -121,8 +120,7 @@ def do_earn(update, context):
     return LIVE
 
 def status(update, context):
-    #update.message.reply_text(db.get_chat(update.message.chat_id))
-    update.message.reply_text(context.chat_data)
+    update.message.reply_text(db.get_chat(update.message.chat_id))
 
 def dialy_update_balance(context):
     job = context.job
@@ -207,10 +205,7 @@ def main():
         }
     }
     global updater
-    #updater = Updater(token=TOKEN, use_context=True, request_kwargs=REQUEST_KWARGS ) #
-    my_persistence = PicklePersistence(filename='persistent_data.json')
-    updater = Updater(token=TOKEN, persistence=my_persistence, use_context=True, base_url="https://telegg.ru/orig/bot")
-
+    updater = Updater(token=TOKEN, use_context=True, base_url="https://telegg.ru/orig/bot" ) #request_kwargs=REQUEST_KWARGS
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
