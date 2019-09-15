@@ -8,7 +8,7 @@ services:
      - .:/code
     env_file:
      - .env
-     - ./data/data.env
+     - ./data/.env
     depends_on:
      - database
   database:
@@ -19,4 +19,4 @@ services:
     volumes:
         - ./data/init.sql:/data/application/init.sql
     env_file:
-      - ./data/data.env        
+      - ./data/.env
