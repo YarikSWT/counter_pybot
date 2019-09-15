@@ -20,3 +20,9 @@ services:
         - ./data/init.sql:/data/application/init.sql
     env_file:
       - ./data/.env
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=dev
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=secret
