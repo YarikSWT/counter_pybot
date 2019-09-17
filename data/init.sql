@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS dev;
 USE dev;
 CREATE TABLE IF NOT EXISTS chats(
-    chat_id INTEGER,
+    chat_id BIGINT,
     data_begin DATE,
     month_budget INTEGER,
     balance INTEGER,
