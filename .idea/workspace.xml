@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3b76c612-8860-410e-b530-2cbfa89e51d9" name="Default" comment="add monthly job and make all works from database">
+    <list default="true" id="3b76c612-8860-410e-b530-2cbfa89e51d9" name="Default" comment="edit docker-compose.yml to add env for mysql">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/data/init.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -180,6 +183,10 @@
       <updated>1557480263886</updated>
       <workItem from="1568554400143" duration="16000" />
       <workItem from="1568554461942" duration="218000" />
+      <workItem from="1568554949649" duration="2139000" />
+      <workItem from="1568577290026" duration="2982000" />
+      <workItem from="1568630597893" duration="551000" />
+      <workItem from="1568711288721" duration="449000" />
     </task>
     <task id="LOCAL-00001" summary="init commit">
       <created>1557744333342</created>
@@ -328,7 +335,21 @@
       <option name="project" value="LOCAL" />
       <updated>1568554659906</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="delete whitepaces of data/.env">
+      <created>1568554999874</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1568554999874</updated>
+    </task>
+    <task id="LOCAL-00023" summary="edit docker-compose.yml to add env for mysql">
+      <created>1568555203108</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1568555203108</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -368,6 +389,8 @@
     <MESSAGE value="change token + add monthly job" />
     <MESSAGE value="add monthly job and make all works from database" />
     <MESSAGE value="add db config &amp; revert persistance" />
-    <option name="LAST_COMMIT_MESSAGE" value="add db config &amp; revert persistance" />
+    <MESSAGE value="delete whitepaces of data/.env" />
+    <MESSAGE value="edit docker-compose.yml to add env for mysql" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit docker-compose.yml to add env for mysql" />
   </component>
 </project>

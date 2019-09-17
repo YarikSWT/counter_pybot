@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 
-DATEBASE_URL= os.getenv("CLEARDB_DATABASE_URL", "mysql://root:secret@database/dev").replace("mysql", "mysql+pymysql").split('?')[0]
+DATEBASE_URL= os.getenv("CLEARDB_DATABASE_URL", "mysql://user:pass@database/dev").replace("mysql", "mysql+pymysql").split('?')[0]
 print(DATEBASE_URL)
 engine = create_engine(DATEBASE_URL, echo=True)
 Base = declarative_base()
